@@ -2,11 +2,14 @@ package com.aluracursos.screenmatch.principal;
 
 import com.aluracursos.screenmatch.model.DatosSerie;
 import com.aluracursos.screenmatch.model.DatosTemporadas;
+import com.aluracursos.screenmatch.model.Serie;
 import com.aluracursos.screenmatch.service.ConsumoAPI;
 import com.aluracursos.screenmatch.service.ConvierteDatos;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Principal {
     private Scanner teclado = new Scanner(System.in);
@@ -62,7 +65,7 @@ public class Principal {
         DatosSerie datosSerie = getDatosSerie();
         List<DatosTemporadas> temporadas = new ArrayList<>();
 
-        for (int i = 1; i <= datosSerie.totalDeTemporadas(); i++) {
+        for (int i = 1; i <= datosSerie.totalTemporadas(); i++) {
             var json = consumoApi.obtenerDatos(URL_BASE + datosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
             DatosTemporadas datosTemporada = conversor.obtenerDatos(json, DatosTemporadas.class);
             temporadas.add(datosTemporada);
@@ -76,7 +79,14 @@ public class Principal {
     }
 
     private void mostrarSeriesBuscadas() {
-        datosSeries.forEach(System.out::println);
+        List<Serie> series = new ArrayList<>();
+        series = datosSeries.stream()
+                .map(d -> new Serie(d))
+                .collect(Collectors.toList());
+
+        series.stream()
+                .sorted(Comparator.comparing(Serie::getGenero))
+                .forEach(System.out::println);
     }
 }
 
