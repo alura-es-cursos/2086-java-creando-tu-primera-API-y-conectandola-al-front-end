@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/series")
 public class SerieController {
     @Autowired
     private SerieRepository repository;
